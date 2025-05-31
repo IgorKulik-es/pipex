@@ -28,8 +28,61 @@ char	**parse_path(char **envp)
 	env_buffer = ft_split(*env_buffer, ':');
 	if (env_buffer == NULL)
 		return (NULL);
-	printf("Line found %s\n", env_buffer[1]);
 	return (env_buffer);
 }
 
+char	**create_cmd_path(char *cmd, char **envp)
+{
+	char	**paths;
+	char	**result;
+	int		size_env;
+	int		index;
 
+	paths = parse_path(envp);
+	if (paths == NULL)
+		return (NULL);
+	index = 0;
+	size_env = measure_array(paths);
+	result = (char **)malloc((size_env + 1) * sizeof(char *));
+	if (result == NULL)
+		return ((char **)clean_split(paths));
+	while (index < size_env)
+	{
+		result[index] = ft_strjoin(paths[index], "/", cmd);
+		if (result[index] == NULL)
+			return (clean_split(paths), (char **)clean_split(result));
+		index++;
+	}
+	result[index] = NULL;
+	clean_split(paths);
+	return (result);
+}
+
+char	*find_command(char *cmd, char **envp)
+{
+	char	**paths;
+	char	*result;
+	int		index;
+	int		have_access;
+
+	index = 0;
+	result = NULL;
+	have_access = access(cmd, X_OK);
+	if (have_access == 0)
+		return (ft_strjoin(cmd, "", ""));
+	paths = create_cmd_path(cmd, envp);
+	if (paths == NULL)
+	{
+		perror("No such file or directory");
+		return (NULL);
+	}
+	while (have_access != 0 && paths[index])
+	{
+		have_access = access(paths[index], X_OK);
+		index++;
+	}
+	if (have_access == 0)
+		result = ft_strjoin(paths[index - 1], "", "");
+	clean_split(paths);
+	return (result);
+}

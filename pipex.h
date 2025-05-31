@@ -29,6 +29,7 @@ int		measure_array(char **arr);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 char	**parse_path(char **envp);
 char	**create_cmd_path(char *cmd, char **envp);
+char	*find_command(char *cmd, char **envp);
 int		try_one_command(char *cmd, char **argv, char **envp);
 
 #endif
