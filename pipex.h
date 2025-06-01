@@ -17,8 +17,15 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <errno.h>
+# include <string.h>
 # include <stdio.h>
 # include <sys/wait.h>
+
+typedef struct s_pipe_data
+{
+	int		fd[2];
+	char	**cmd;
+}		t_pipe_d;
 
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlen(const char *s);

@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-void	do_it(char **argv, char **envp);
+void	do_it(char **argv);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -22,30 +22,24 @@ int	main(int argc, char **argv, char **envp)
 	result = find_command(argv[1], envp);
 	printf("Do I have access: %s\n", result);
 	free(result);
-	//do_it(argv, envp);
+	do_it(argv);
 	if (argc > 0)
 		argv[0][0] = 'a';
 	return (0);
 }
 
 
-void	do_it(char **argv, char **envp)
+void	do_it(char **argv)
 {
-	int		fd[2];
-	int		error;
-	char	**env_var;
+	//int		fd[2];	
+	//char	*test;
 
-	error = 1000;
-	env_var = envp;
-	fd[0] = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0622);
-	fd[1] = open(argv[1], O_RDONLY);
-	dup2(fd[0], 1);
-	dup2(fd[1], 0);
-	env_var = create_cmd_path(argv[3], envp);
-	printf("Trying command %s\n", env_var[4]);
-	error = try_one_command(env_var[4], &argv[3], envp);
-	clean_split(env_var);
-	printf("Tried with error %d\n", error);
-	close(fd[0]);
-	close(fd[1]);
+	printf("Found file: %d, have exec rights: %d\n", access(argv[1], F_OK), access(argv[1], X_OK));
+	//fd[0] = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0622);
+	//fd[1] = open(argv[1], O_RDONLY);
+	//dup2(fd[0], 1);
+	//dup2(fd[1], 0);
+	printf("My error: %s\n", strerror(errno));
+	//close(fd[0]);
+	//close(fd[1]);
 }
