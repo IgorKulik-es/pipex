@@ -6,14 +6,14 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 13:42:01 by ikulik            #+#    #+#             */
-/*   Updated: 2025/05/31 19:13:14 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/03 16:24:54 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
 
-int	try_one_command(char *cmd, char **argv, char **envp)
+int	run_one_command(char *cmd, char **argv, char **envp)
 {
 	pid_t	my_pid;
 	int		error_code;
@@ -31,4 +31,3 @@ int	try_one_command(char *cmd, char **argv, char **envp)
 	return (error_code);
 }
 
-//int	try_all_options()

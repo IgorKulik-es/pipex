@@ -6,13 +6,16 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:33:12 by ikulik            #+#    #+#             */
-/*   Updated: 2025/05/31 17:50:56 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/03 20:21:15 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**parse_path(char **envp)
+static int	check_access(char *cmd, int mode);
+static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex);
+
+char	**parse_path(char **envp, t_pipe_d *pipex)
 {
 	char	**env_buffer;
 
@@ -25,40 +28,40 @@ char	**parse_path(char **envp)
 	}
 	if (*env_buffer == NULL)
 		return (NULL);
-	env_buffer = ft_split(*env_buffer, ':');
+	env_buffer = ft_split(*env_buffer, ':', &pipex->path_size);
 	if (env_buffer == NULL)
-		return (NULL);
+		except_clean("malloc", pipex);
 	return (env_buffer);
 }
 
-char	**create_cmd_path(char *cmd, char **envp)
+char	**create_cmd_path(char *cmd, char **envp, t_pipe_d *pipex)
 {
-	char	**paths;
 	char	**result;
-	int		size_env;
 	int		index;
 
-	paths = parse_path(envp);
-	if (paths == NULL)
-		return (NULL);
 	index = 0;
-	size_env = measure_array(paths);
-	result = (char **)malloc((size_env + 1) * sizeof(char *));
+	if (pipex->paths == NULL)
+		pipex->paths = parse_path(envp, pipex);
+	if (pipex->paths == NULL)
+		except_clean(cmd, pipex);
+	result = (char **)malloc((pipex->path_size + 1) * sizeof(char *));
 	if (result == NULL)
-		return ((char **)clean_split(paths));
-	while (index < size_env)
+		except_clean("malloc", pipex);
+	while (pipex->paths[index])
 	{
-		result[index] = ft_strjoin(paths[index], "/", cmd);
+		result[index] = ft_strjoin(pipex->paths[index], "/", cmd);
 		if (result[index] == NULL)
-			return (clean_split(paths), (char **)clean_split(result));
+		{
+			clean_split(result);
+			except_clean("malloc", pipex);
+		}
 		index++;
 	}
 	result[index] = NULL;
-	clean_split(paths);
 	return (result);
 }
 
-char	*find_command(char *cmd, char **envp)
+int	find_command(int cmd_index, char **envp, t_pipe_d *pipex)
 {
 	char	**paths;
 	char	*result;
@@ -67,22 +70,60 @@ char	*find_command(char *cmd, char **envp)
 
 	index = 0;
 	result = NULL;
-	have_access = access(cmd, X_OK);
+	have_access = check_access(pipex->cmd[cmd_index], EXECUTE);
 	if (have_access == 0)
-		return (ft_strjoin(cmd, "", ""));
-	paths = create_cmd_path(cmd, envp);
-	if (paths == NULL)
+		return (0);
+	if (have_access == -2)
+		except_clean(pipex->cmd[cmd_index], pipex);
+	paths = create_cmd_path(pipex->cmd[cmd_index], envp, pipex);
+	while (paths[index] && have_access != 0)
 	{
-		perror("No such file or directory");
-		return (NULL);
-	}
-	while (have_access != 0 && paths[index])
-	{
-		have_access = access(paths[index], X_OK);
+		have_access = get_cmd(cmd_index, index, paths, pipex);
 		index++;
 	}
-	if (have_access == 0)
-		result = ft_strjoin(paths[index - 1], "", "");
 	clean_split(paths);
-	return (result);
+	if (have_access == 0)
+		return (0);
+	return (-1);
+}
+
+static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex)
+{
+	int	have_access;
+
+	have_access = check_access(cmd_paths[i], EXECUTE);
+	if (have_access == 0)
+	{
+		free(pipex->cmd[cmd_index]);
+		pipex->cmd[cmd_index] = ft_strjoin(cmd_paths[i], "", "");
+		if (pipex->cmd[cmd_index] == NULL)
+		{
+			clean_split(cmd_paths);
+			except_clean("malloc", pipex);
+		}
+		return (0);
+	}
+	else if (have_access == -2)
+	{
+		clean_split(cmd_paths);
+		except_clean(cmd_paths[cmd_index], pipex);
+	}
+	return (have_access);
+}
+
+
+static int	check_access(char *cmd, int mode)
+{
+	int	have_access;
+
+	have_access = access(cmd, F_OK);
+	if (have_access == -1)
+		return (-1);
+	if (mode == READ)
+		have_access = access(cmd, R_OK);
+	if (mode == EXECUTE)
+		have_access = access(cmd, X_OK);
+	if (have_access == -1)
+		return (-2);
+	return (0);
 }

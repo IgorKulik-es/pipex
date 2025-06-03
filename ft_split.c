@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 18:26:16 by ikulik            #+#    #+#             */
-/*   Updated: 2025/05/31 16:42:27 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/03 17:22:49 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static char	*asign_line(char **result, char *buffer, size_t *i_w, size_t len)
 	return (result[*i_w - 1]);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c, int *words)
 {
 	size_t	index_word;
 	size_t	len;
@@ -83,7 +83,8 @@ char	**ft_split(char const *s, char c)
 	char	*buffer;
 	int		flag;
 
-	if (initialize(&flag, &index_word, &result, word_count(s, c)) == NULL)
+	*words = word_count(s, c);
+	if (initialize(&flag, &index_word, &result, *words) == NULL)
 		return (NULL);
 	while (*s)
 	{

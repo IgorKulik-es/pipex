@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:25:35 by ikulik            #+#    #+#             */
-/*   Updated: 2025/05/31 18:06:15 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/03 18:11:27 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void	*clean_split(char **str)
 	char	**start;
 
 	start = str;
+	if (str == NULL)
+		return (NULL);
 	while (*str)
 	{
 		free(*str);
@@ -87,6 +89,8 @@ char	*ft_strjoin(char const *s1, char const *s2, char const *s3)
 	size_t	len_s2;
 	size_t	len_s3;
 
+	if (s1 == NULL || s2 == NULL || s3 == NULL)
+		return (NULL);
 	len_s1 = ft_strlen(s1);
 	len_s2 = ft_strlen(s2);
 	len_s3 = ft_strlen(s3);

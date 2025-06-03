@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:25:48 by ikulik            #+#    #+#             */
-/*   Updated: 2025/05/31 19:36:01 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/03 20:22:22 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,19 @@ void	do_it(char **argv);
 
 int	main(int argc, char **argv, char **envp)
 {
-/* 	int	fd[2];*/
-	char	*result;
+	t_pipe_d	pipex;
+	int			result;
 
-	result = find_command(argv[1], envp);
-	printf("Do I have access: %s\n", result);
-	free(result);
-	do_it(argv);
-	if (argc > 0)
+	result = 0;
+	initialize_pipe(&pipex, argc, argv);
+	result = find_command(0, envp, &pipex);
+	printf("Searching %s\n", pipex.cmd[0]);
+	printf("Command found %s\n", pipex.cmd[0]);
+	printf("Do I have access: %d\n", result);
+	//printf("Cmds :%s, %s\nfile names:%s, %s\n, cmd nums: %d, %d\n", pipex.cmd[0], pipex.cmd[1], pipex.files[0], pipex.files[1], pipex.num_args[0], pipex.num_args[1]);
+	//do_it(argv);
+	except_clean("End", &pipex);
+	if (argc > 0 && envp)
 		argv[0][0] = 'a';
 	return (0);
 }
@@ -31,15 +36,15 @@ int	main(int argc, char **argv, char **envp)
 
 void	do_it(char **argv)
 {
-	//int		fd[2];	
+	int		fd[2];
 	//char	*test;
 
-	printf("Found file: %d, have exec rights: %d\n", access(argv[1], F_OK), access(argv[1], X_OK));
+	printf("Found file: %d, have read rights: %d\n", access(argv[1], F_OK), access(argv[1], R_OK));
 	//fd[0] = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0622);
-	//fd[1] = open(argv[1], O_RDONLY);
+	fd[1] = open(argv[1], O_RDONLY);
 	//dup2(fd[0], 1);
 	//dup2(fd[1], 0);
-	printf("My error: %s\n", strerror(errno));
+	perror(argv[1]);
 	//close(fd[0]);
-	//close(fd[1]);
+	close(fd[1]);
 }
