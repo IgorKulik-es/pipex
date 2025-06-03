@@ -3,7 +3,7 @@ TNAME = test
 LIBRARY = lib_pipex.a
 
 SRCS = pipex_main.c forker.c pipex_utils.c parse_cmd.c ft_split.c basic_utils.c \
-initializer.c error_handler.c
+initializer.c error_handler.c parse_files.c
 TSRCS = test1.c
 
 HEADER = pipex.h

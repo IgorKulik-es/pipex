@@ -17,8 +17,6 @@ int	main(int argc, char **argv)
 	int	index;
 
 	index = 1;
-	if (argc == 1)
-		return (1);
 	while (index < argc)
 	{
 		printf("%s ", argv[index]);

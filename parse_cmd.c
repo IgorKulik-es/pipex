@@ -12,14 +12,13 @@
 
 #include "pipex.h"
 
-static int	check_access(char *cmd, int mode);
 static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex);
 
-char	**parse_path(char **envp, t_pipe_d *pipex)
+static char	**parse_path(t_pipe_d *pipex)
 {
 	char	**env_buffer;
 
-	env_buffer = envp;
+	env_buffer = pipex->envp;
 	while (*env_buffer)
 	{
 		if (ft_strncmp("PATH", *env_buffer, 4) == 0)
@@ -34,14 +33,14 @@ char	**parse_path(char **envp, t_pipe_d *pipex)
 	return (env_buffer);
 }
 
-char	**create_cmd_path(char *cmd, char **envp, t_pipe_d *pipex)
+static char	**create_cmd_path(char *cmd, t_pipe_d *pipex)
 {
 	char	**result;
 	int		index;
 
 	index = 0;
 	if (pipex->paths == NULL)
-		pipex->paths = parse_path(envp, pipex);
+		pipex->paths = parse_path(pipex);
 	if (pipex->paths == NULL)
 		except_clean(cmd, pipex);
 	result = (char **)malloc((pipex->path_size + 1) * sizeof(char *));
@@ -61,38 +60,41 @@ char	**create_cmd_path(char *cmd, char **envp, t_pipe_d *pipex)
 	return (result);
 }
 
-int	find_command(int cmd_index, char **envp, t_pipe_d *pipex)
+int	parse_commands(t_pipe_d *pipex)
 {
 	char	**paths;
-	char	*result;
 	int		index;
-	int		have_access;
+	int		access_status;
+	int		cmd_index;
 
-	index = 0;
-	result = NULL;
-	have_access = check_access(pipex->cmd[cmd_index], EXECUTE);
-	if (have_access == 0)
-		return (0);
-	if (have_access == -2)
-		except_clean(pipex->cmd[cmd_index], pipex);
-	paths = create_cmd_path(pipex->cmd[cmd_index], envp, pipex);
-	while (paths[index] && have_access != 0)
+	cmd_index = -1;
+	while (++cmd_index < pipex->num_cmd)
 	{
-		have_access = get_cmd(cmd_index, index, paths, pipex);
-		index++;
+		index = 0;
+		access_status = check_access(pipex->cmd[cmd_index], EXECUTE);
+		if (access_status == 0)
+			continue ;
+		if (access_status == -2)
+			except_clean(pipex->cmd[cmd_index], pipex);
+		paths = create_cmd_path(pipex->cmd[cmd_index], pipex);
+		while (paths[index] && access_status != 0)
+		{
+			access_status = get_cmd(cmd_index, index, paths, pipex);
+			index++;
+		}
+		clean_split(paths);
+		if (access_status != 0)
+			except_clean(pipex->cmd[cmd_index], pipex);
 	}
-	clean_split(paths);
-	if (have_access == 0)
-		return (0);
-	return (-1);
+	return (0);
 }
 
 static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex)
 {
-	int	have_access;
+	int	access_status;
 
-	have_access = check_access(cmd_paths[i], EXECUTE);
-	if (have_access == 0)
+	access_status = check_access(cmd_paths[i], EXECUTE);
+	if (access_status == 0)
 	{
 		free(pipex->cmd[cmd_index]);
 		pipex->cmd[cmd_index] = ft_strjoin(cmd_paths[i], "", "");
@@ -103,27 +105,28 @@ static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex)
 		}
 		return (0);
 	}
-	else if (have_access == -2)
+	else if (access_status == -2)
 	{
 		clean_split(cmd_paths);
 		except_clean(cmd_paths[cmd_index], pipex);
 	}
-	return (have_access);
+	return (access_status);
 }
 
-
-static int	check_access(char *cmd, int mode)
+int	check_access(char *cmd, int mode)
 {
-	int	have_access;
+	int	access_status;
 
-	have_access = access(cmd, F_OK);
-	if (have_access == -1)
+	access_status = access(cmd, F_OK);
+	if (access_status == -1)
 		return (-1);
 	if (mode == READ)
-		have_access = access(cmd, R_OK);
+		access_status = access(cmd, R_OK);
 	if (mode == EXECUTE)
-		have_access = access(cmd, X_OK);
-	if (have_access == -1)
+		access_status = access(cmd, X_OK);
+	if (mode == WRITE)
+		access_status = access(cmd, W_OK);
+	if (access_status == -1)
 		return (-2);
 	return (0);
 }

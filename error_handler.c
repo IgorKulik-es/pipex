@@ -24,9 +24,8 @@ int	except_clean(char *name, t_pipe_d *pipex)
 	}
 	else if (name)
 	{
-		write(2, "c function failure: ", 20);
 		write(2, name, ft_strlen(name));
-		write(2, "\n", 1);
+		write(2, ": c function failure\n", 21);
 		clean_pipex(pipex);
 		exit (EXIT_FAILURE);
 	}
@@ -38,16 +37,13 @@ static void	clean_pipex(t_pipe_d *pipex)
 {
 	int	index;
 
-	index = 0;
+	index = -1;
 	clean_split(pipex->cmd);
 	clean_split(pipex->paths);
 	if (pipex->num_args)
 		free(pipex->num_args);
-	while (pipex->args != NULL && pipex->args[index] != NULL)
-	{
+	while (pipex->args != NULL && pipex->args[++index] != NULL)
 		clean_split(pipex->args[index]);
-		index++;
-	}
 	if (pipex->args)
 		free(pipex->args);
 	if (pipex->fd[0] >= 0)
@@ -58,4 +54,8 @@ static void	clean_pipex(t_pipe_d *pipex)
 		close(pipex->fd_inout[0]);
 	if (pipex->fd_inout[1] >= 0)
 		close(pipex->fd_inout[1]);
+	if (pipex->stdio[0] >= 0)
+		close(pipex->stdio[0]);
+	if (pipex->stdio[1] >= 0)
+		close(pipex->stdio[1]);
 }

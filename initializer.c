@@ -14,7 +14,7 @@
 
 static void	asign_memory_pipex(t_pipe_d *pipex, int argc, char **argv);
 
-void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv)
+void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp)
 {
 	pipex->args = NULL;
 	pipex->cmd = NULL;
@@ -22,10 +22,14 @@ void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv)
 	pipex->num_cmd = argc - 3;
 	pipex->num_args = NULL;
 	pipex->path_size = 0;
+	pipex->argv = argv;
+	pipex->envp = envp;
 	pipex->fd_inout[0] = -1;
 	pipex->fd_inout[1] = -1;
 	pipex->fd[0] = -1;
 	pipex->fd[1] = -1;
+	pipex->stdio[0] = 0;
+	pipex->stdio[1] = 1;
 	if (pipex->num_cmd != 2)
 	{
 		perror("Wrong number of arguments!");
