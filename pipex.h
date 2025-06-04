@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:06 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 19:53:42 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 16:45:42 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,19 @@
 # define READ 2
 # define EXECUTE 4
 # define WRITE 8
+# define CMD_NF 16
+# define CMD_NF_L 127
+# define CMD_PERM 32
+# define CMD_PERM_L 126
+# define FILE_NF 64
+# define FILE_NF_L 128
+# define FILE_PRMT 256
+# define DUP 1
+# define DUP2 2
+# define FORK 3
+# define EXECVE 4
+# define PIPE 5
+# define MALLOC 6
 
 # include <fcntl.h>
 # include <unistd.h>
@@ -26,7 +39,7 @@
 
 typedef struct s_pipe_data
 {
-	int		fd[2];
+	int		fd;
 	int		stdio[2];
 	int		fd_inout[2];
 	int		num_cmd;
@@ -38,6 +51,7 @@ typedef struct s_pipe_data
 	char	**argv;
 	char	**envp;
 	int		path_size;
+	int		error;
 }		t_pipe_d;
 
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -53,6 +67,8 @@ int		except_clean(char *name, t_pipe_d *pipex);
 void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp);
 int		check_access(char *cmd, int mode);
 int		open_fildes(t_pipe_d *pipex);
+void	run_first_command(t_pipe_d *pipex);
+void	run_last_command(t_pipe_d *pipex);
 
 #endif
 

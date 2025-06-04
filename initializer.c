@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 17:04:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 19:51:59 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 16:23:13 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@ void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp)
 	pipex->envp = envp;
 	pipex->fd_inout[0] = -1;
 	pipex->fd_inout[1] = -1;
-	pipex->fd[0] = -1;
-	pipex->fd[1] = -1;
+	pipex->fd = -1;
 	pipex->stdio[0] = 0;
 	pipex->stdio[1] = 1;
+	pipex->error = 0;
 	if (pipex->num_cmd != 2)
 	{
 		perror("Wrong number of arguments!");
@@ -58,7 +58,7 @@ static void	asign_memory_pipex(t_pipe_d *pipex, int argc, char **argv)
 		if (pipex->args[argc - 2] == NULL)
 			except_clean("malloc", pipex);
 		pipex->cmd[argc - 2] = ft_strjoin(pipex->args[argc - 2][0], "", "");
-		if (pipex->cmd[argc - 2] == NULL)
+		if (pipex->cmd[argc - 2] == NULL && pipex->args[argc - 2][0] != NULL)
 			except_clean("malloc", pipex);
 	}
 }

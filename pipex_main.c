@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:25:48 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 20:22:22 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 13:48:30 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ int	main(int argc, char **argv, char **envp)
 	initialize_pipe(&pipex, argc, argv, envp);
 	open_fildes(&pipex);
 	parse_commands(&pipex);
-	result = run_one_command(0, &pipex);
-	printf("How did it go: %d\n", result);
-	//printf("Cmds :%s, %s\nfile names:%s, %s\n, cmd nums: %d, %d\n", pipex.cmd[0], pipex.cmd[1], pipex.files[0], pipex.files[1], pipex.num_args[0], pipex.num_args[1]);
-	//do_it(argv);
+	pipex.fd = pipex.fd_inout[0];
 	errno = 0;
-	except_clean("end", &pipex);
+	run_first_command(&pipex);
+	run_last_command(&pipex);
+	printf("How did it go: %d\n", result);
+	except_clean(NULL, &pipex);
 	if (argc > 0 && envp)
 		argv[0][0] = 'a';
 	return (0);

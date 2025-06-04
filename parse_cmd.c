@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:33:12 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 20:21:15 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 16:56:22 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static char	**create_cmd_path(char *cmd, t_pipe_d *pipex)
 	while (pipex->paths[index])
 	{
 		result[index] = ft_strjoin(pipex->paths[index], "/", cmd);
-		if (result[index] == NULL)
+		if (result[index] == NULL && cmd != NULL)
 		{
 			clean_split(result);
 			except_clean("malloc", pipex);

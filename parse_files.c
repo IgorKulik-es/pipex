@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 23:13:47 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 23:13:47 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 14:40:40 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int	open_fildes(t_pipe_d *pipex)
 	pipex->fd_inout[0] = open(pipex->files[0], O_RDONLY);
 	if (pipex->fd_inout[0] < 0)
 		except_clean(pipex->files[0], pipex);
-	pipex->fd_inout[1] = open(pipex->files[1], O_WRONLY | O_CREAT | O_TRUNC, 0622);
+	pipex->fd_inout[1] = open(pipex->files[1],
+			O_WRONLY | O_CREAT | O_TRUNC, 0622);
 	if (pipex->fd_inout[1] < 0)
 		except_clean(pipex->files[1], pipex);
 	pipex->stdio[0] = dup(0);

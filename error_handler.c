@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:12:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 20:23:07 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/04 16:56:16 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,33 @@ int	except_clean(char *name, t_pipe_d *pipex)
 	exit (EXIT_SUCCESS);
 }
 
+int	except_clean1(char *name, t_pipe_d *pipex, int err_code)
+{
+	if (1 <= err_code && err_code <= 6)
+	{
+		print_error("c function failure: ", name, pipex, err_code);
+		clean_pipex(pipex);
+		exit(1);
+	}
+	if (err_code == FILE_NF || err_code == FILE_NF_L)
+		print_error("pipex: no such file or directory: ",
+			name, pipex, err_code);
+	if (err_code == FILE_PRMT || err_code == CMD_PERM || err_code == CMD_PERM_L)
+		print_error("pipex: permission denied: ", name, pipex, err_code);
+	if (err_code == CMD_NF || err_code == CMD_NF_L)
+		print_error("pipex: command not found: ", name, pipex, err_code);
+}
+
+void	print_error(char *s1, char *s2, t_pipe_d *pipex, int err_code)
+{
+	if (s1 == NULL || s2 == NULL)
+		return ;
+	write(2, s1, ft_strlen(s1));
+	write(2, s2, ft_strlen(s2));
+	write(2, "\n", 1);
+	pipex->error |= err_code;
+}
+
 static void	clean_pipex(t_pipe_d *pipex)
 {
 	int	index;
@@ -46,10 +73,8 @@ static void	clean_pipex(t_pipe_d *pipex)
 		clean_split(pipex->args[index]);
 	if (pipex->args)
 		free(pipex->args);
-	if (pipex->fd[0] >= 0)
-		close(pipex->fd[0]);
-	if (pipex->fd[1] >= 0)
-		close(pipex->fd[1]);
+	if (pipex->fd >= 0)
+		close(pipex->fd);
 	if (pipex->fd_inout[0] >= 0)
 		close(pipex->fd_inout[0]);
 	if (pipex->fd_inout[1] >= 0)
