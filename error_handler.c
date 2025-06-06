@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:12:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/04 16:56:16 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 14:02:53 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	except_clean(char *name, t_pipe_d *pipex)
 	exit (EXIT_SUCCESS);
 }
 
-int	except_clean1(char *name, t_pipe_d *pipex, int err_code)
+int	except_clean_t(char *name, t_pipe_d *pipex, int err_code)
 {
 	if (1 <= err_code && err_code <= 6)
 	{
@@ -41,13 +41,30 @@ int	except_clean1(char *name, t_pipe_d *pipex, int err_code)
 		clean_pipex(pipex);
 		exit(1);
 	}
-	if (err_code == FILE_NF || err_code == FILE_NF_L)
+	if (err_code == FILE_NF)
 		print_error("pipex: no such file or directory: ",
 			name, pipex, err_code);
-	if (err_code == FILE_PRMT || err_code == CMD_PERM || err_code == CMD_PERM_L)
+	if ((err_code & FILE_PRM) || err_code == CMD_PERM || err_code == CMD_PERM_L)
 		print_error("pipex: permission denied: ", name, pipex, err_code);
 	if (err_code == CMD_NF || err_code == CMD_NF_L)
 		print_error("pipex: command not found: ", name, pipex, err_code);
+	if (err_code == CMD_NF_L || err_code == CMD_PERM_L)
+		pipex->to_return = err_code;
+	else if ((err_code & FILE_PRM_L))
+		pipex->to_return = EXIT_FAILURE;
+	return (EXIT_SUCCESS);
+}
+
+void	verify_parsing_return(t_pipe_d *pipex)
+{
+	int	exit_code;
+
+	exit_code = pipex->to_return;
+	if (pipex->to_return != 0)
+	{
+		clean_pipex(pipex);
+		exit (exit_code);
+	}
 }
 
 void	print_error(char *s1, char *s2, t_pipe_d *pipex, int err_code)

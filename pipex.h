@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:06 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/04 16:45:42 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 13:48:35 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # define CMD_PERM 32
 # define CMD_PERM_L 126
 # define FILE_NF 64
-# define FILE_NF_L 128
-# define FILE_PRMT 256
+# define FILE_PRM_L 128
+# define FILE_PRM 256
 # define DUP 1
 # define DUP2 2
 # define FORK 3
@@ -52,6 +52,7 @@ typedef struct s_pipe_data
 	char	**envp;
 	int		path_size;
 	int		error;
+	int		to_return;
 }		t_pipe_d;
 
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
