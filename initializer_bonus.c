@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   initializer.c                                      :+:      :+:    :+:   */
+/*   initializer_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 17:04:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:13:07 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 20:25:36 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static void	asign_memory_pipex(t_pipe_d *pipex, int argc, char **argv);
 
@@ -27,9 +27,11 @@ void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp)
 	pipex->fd_inout[0] = -1;
 	pipex->fd_inout[1] = -1;
 	pipex->fd = -1;
+	pipex->stdio[0] = 0;
+	pipex->stdio[1] = 1;
 	pipex->error = 0;
 	pipex->to_return = 0;
-	if (pipex->num_cmd != 2)
+	if (pipex->num_cmd < 2)
 	{
 		write(2, "pipex: wrong number of arguments\n", 33);
 		exit(EXIT_FAILURE);

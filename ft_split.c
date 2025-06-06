@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 18:26:16 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/03 17:22:49 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 19:19:35 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,16 @@ static char	**initialize(int *flag, size_t *i, char ***result, size_t words)
 	if (words > 0)
 		*result = (char **)malloc((words + 1) * sizeof(char *));
 	else
-		*result = (char **)malloc(sizeof(char *));
+		*result = (char **)malloc(2 * sizeof(char *));
 	if (*result == NULL)
 		return (NULL);
 	(*result)[words] = NULL;
+	if (words == 0)
+	{
+		(*result)[1] = NULL;
+		(*result)[0] = malloc(1 * sizeof(char));
+		(*result)[0][0] = '\0';
+	}
 	return (*result);
 }
 

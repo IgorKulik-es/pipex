@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_cmd.c                                        :+:      :+:    :+:   */
+/*   parse_cmd_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:33:12 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:22:05 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 20:25:27 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static int	get_cmd(int cmd_index, int i, char **cmd_paths, t_pipe_d *pipex);
 
@@ -98,6 +98,7 @@ int	parse_all_commands(t_pipe_d *pipex)
 			if (access_status == -2)
 				except_clean(pipex->cmd[cmd_index], pipex, CMD_PERM);
 		}
+		except_middle_command(cmd_index, access_status, pipex);
 		if (pipex->fd_inout[1] > -1 && cmd_index == pipex->num_cmd - 1)
 		{
 			if (access_status == -1)

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:06 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:15:14 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 20:23:39 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 typedef struct s_pipe_data
 {
 	int		fd;
+	int		stdio[2];
 	int		fd_inout[2];
 	int		num_cmd;
 	char	*files[2];
@@ -64,11 +65,11 @@ int		measure_array(char **arr);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 int		except_clean(char *name, t_pipe_d *pipex, int err_code);
 int		parse_all_commands(t_pipe_d *pipex);
+void	except_middle_command(int cmd_index, int access_status, t_pipe_d *pipex);
 void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp);
 int		check_access(char *cmd, int mode);
-int		check_input(t_pipe_d *pipex);
-int		check_output(t_pipe_d *pipex);
 void	run_first_command(t_pipe_d *pipex);
 void	run_last_command(t_pipe_d *pipex);
+void	run_middle_command(int index_cmd, t_pipe_d *pipex);
 
 #endif

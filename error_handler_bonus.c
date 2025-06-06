@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handler.c                                    :+:      :+:    :+:   */
+/*   error_handler_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:12:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:20:05 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/06 20:25:50 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static void	clean_pipex(t_pipe_d *pipex);
 static void	print_error(char *s1, char *s2, t_pipe_d *pipex, int err_code);
@@ -70,4 +70,15 @@ static void	clean_pipex(t_pipe_d *pipex)
 		close(pipex->fd_inout[0]);
 	if (pipex->fd_inout[1] >= 0)
 		close(pipex->fd_inout[1]);
+}
+
+void	except_middle_command(int cmd_index, int access_status, t_pipe_d *pipex)
+{
+	if (cmd_index > 0 && cmd_index < pipex->num_cmd - 1)
+	{
+		if (access_status == -1)
+			except_clean(pipex->cmd[cmd_index], pipex, CMD_NF);
+		if (access_status == -2)
+			except_clean(pipex->cmd[cmd_index], pipex, CMD_PERM);
+	}
 }
