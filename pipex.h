@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:06 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:15:14 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 14:49:42 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,11 @@
 
 typedef struct s_pipe_data
 {
-	int		fd;
+	int		*fd;
 	int		fd_inout[2];
 	int		num_cmd;
+	int		*pids;
 	char	*files[2];
-	int		*num_args;
 	char	**cmd;
 	char	***args;
 	char	**paths;
@@ -70,5 +70,6 @@ int		check_input(t_pipe_d *pipex);
 int		check_output(t_pipe_d *pipex);
 void	run_first_command(t_pipe_d *pipex);
 void	run_last_command(t_pipe_d *pipex);
+void	main_waiter(t_pipe_d *pipex);
 
 #endif

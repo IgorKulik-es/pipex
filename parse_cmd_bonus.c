@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:33:12 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:25:27 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 17:14:29 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,10 @@ int	parse_one_command(t_pipe_d *pipex, int cmd_index)
 	int		access_status;
 
 	index = 0;
+	if (ft_strncmp(pipex->cmd[cmd_index], "/dev/urandom",
+			ft_strlen(pipex->cmd[cmd_index])) == 0
+		&& ft_strlen(pipex->cmd[cmd_index]) != 0)
+		return (0);
 	access_status = check_access(pipex->cmd[cmd_index], EXECUTE);
 	if (access_status == 0)
 		return (0);
@@ -88,7 +92,7 @@ int	parse_all_commands(t_pipe_d *pipex)
 	int		cmd_index;
 
 	cmd_index = 0;
-	while (cmd_index < pipex->num_cmd)
+	while (cmd_index < pipex->num_cmd - 1)
 	{
 		access_status = parse_one_command(pipex, cmd_index);
 		if (pipex->fd_inout[0] > -1 && cmd_index == 0)
@@ -98,16 +102,15 @@ int	parse_all_commands(t_pipe_d *pipex)
 			if (access_status == -2)
 				except_clean(pipex->cmd[cmd_index], pipex, CMD_PERM);
 		}
-		except_middle_command(cmd_index, access_status, pipex);
-		if (pipex->fd_inout[1] > -1 && cmd_index == pipex->num_cmd - 1)
-		{
-			if (access_status == -1)
-				except_clean(pipex->cmd[cmd_index], pipex, CMD_NF_L);
-			if (access_status == -2)
-				except_clean(pipex->cmd[cmd_index], pipex, CMD_PERM_L);
-		}
+		except_mid_command(cmd_index, access_status, pipex);
 		cmd_index++;
 	}
+	check_output(pipex);
+	access_status = parse_one_command(pipex, cmd_index);
+	if (access_status == -1 && pipex->fd_inout[1] > -1)
+		except_clean(pipex->cmd[cmd_index], pipex, CMD_NF_L);
+	if (access_status == -2 && pipex->fd_inout[1] > -1)
+		except_clean(pipex->cmd[cmd_index], pipex, CMD_PERM_L);
 	return (0);
 }
 

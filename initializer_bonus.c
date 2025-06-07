@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 17:04:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:25:36 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 15:47:23 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,14 @@ void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp)
 	pipex->args = NULL;
 	pipex->cmd = NULL;
 	pipex->paths = NULL;
+	pipex->pids = NULL;
+	pipex->fd = NULL;
 	pipex->num_cmd = argc - 3;
-	pipex->num_args = NULL;
 	pipex->path_size = 0;
 	pipex->argv = argv;
 	pipex->envp = envp;
 	pipex->fd_inout[0] = -1;
 	pipex->fd_inout[1] = -1;
-	pipex->fd = -1;
-	pipex->stdio[0] = 0;
-	pipex->stdio[1] = 1;
 	pipex->error = 0;
 	pipex->to_return = 0;
 	if (pipex->num_cmd < 2)
@@ -43,10 +41,15 @@ void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp)
 
 static void	asign_memory_pipex(t_pipe_d *pipex, int argc, char **argv)
 {
+	int	words_dummy;
+
+	words_dummy = 0;
 	pipex->cmd = (char **)malloc((pipex->num_cmd + 1) * sizeof(char *));
 	pipex->args = (char ***)malloc((pipex->num_cmd + 1) * sizeof(char **));
-	pipex->num_args = (int *)malloc(pipex->num_cmd * sizeof(int));
-	if (pipex->cmd == NULL || pipex->args == NULL || pipex->num_args == NULL)
+	pipex->pids = (int *)malloc((pipex->num_cmd) * sizeof(int));
+	pipex->fd = (int *)malloc((pipex->num_cmd - 1) * sizeof(int));
+	if (pipex->cmd == NULL || pipex->args == NULL
+		|| pipex->pids == NULL || pipex->fd == NULL)
 		except_clean("malloc", pipex, MALLOC);
 	pipex->cmd[pipex->num_cmd] = NULL;
 	pipex->args[pipex->num_cmd] = NULL;
@@ -54,7 +57,7 @@ static void	asign_memory_pipex(t_pipe_d *pipex, int argc, char **argv)
 	while (--argc >= 2)
 	{
 		pipex->args[argc - 2] = ft_split(argv[argc],
-				' ', &pipex->num_args[argc - 2]);
+				' ', &words_dummy);
 		if (pipex->args[argc - 2] == NULL)
 			except_clean("malloc", pipex, MALLOC);
 		pipex->cmd[argc - 2] = ft_strjoin(pipex->args[argc - 2][0], "", "");

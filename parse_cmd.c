@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 16:33:12 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:22:05 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 17:13:28 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,10 @@ int	parse_one_command(t_pipe_d *pipex, int cmd_index)
 	int		access_status;
 
 	index = 0;
+	if (ft_strncmp(pipex->cmd[cmd_index], "/dev/urandom",
+			ft_strlen(pipex->cmd[cmd_index])) == 0
+		&& ft_strlen(pipex->cmd[cmd_index]) != 0)
+		return (0);
 	access_status = check_access(pipex->cmd[cmd_index], EXECUTE);
 	if (access_status == 0)
 		return (0);

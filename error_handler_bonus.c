@@ -6,7 +6,7 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:12:46 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:25:50 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 16:58:44 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,21 +58,22 @@ static void	clean_pipex(t_pipe_d *pipex)
 	index = -1;
 	clean_split(pipex->cmd);
 	clean_split(pipex->paths);
-	if (pipex->num_args)
-		free(pipex->num_args);
+	if (pipex->pids)
+		free(pipex->pids);
 	while (pipex->args != NULL && pipex->args[++index] != NULL)
 		clean_split(pipex->args[index]);
 	if (pipex->args)
 		free(pipex->args);
-	if (pipex->fd >= 0)
-		close(pipex->fd);
+	index = -1;
+	if (pipex->fd)
+		free(pipex->fd);
 	if (pipex->fd_inout[0] >= 0)
 		close(pipex->fd_inout[0]);
 	if (pipex->fd_inout[1] >= 0)
 		close(pipex->fd_inout[1]);
 }
 
-void	except_middle_command(int cmd_index, int access_status, t_pipe_d *pipex)
+void	except_mid_command(int cmd_index, int access_status, t_pipe_d *pipex)
 {
 	if (cmd_index > 0 && cmd_index < pipex->num_cmd - 1)
 	{

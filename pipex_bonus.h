@@ -6,12 +6,12 @@
 /*   By: ikulik <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 19:26:06 by ikulik            #+#    #+#             */
-/*   Updated: 2025/06/06 20:23:39 by ikulik           ###   ########.fr       */
+/*   Updated: 2025/06/07 16:53:43 by ikulik           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 # define READ 2
 # define EXECUTE 4
 # define WRITE 8
@@ -40,12 +40,11 @@
 
 typedef struct s_pipe_data
 {
-	int		fd;
-	int		stdio[2];
+	int		*fd;
 	int		fd_inout[2];
 	int		num_cmd;
+	int		*pids;
 	char	*files[2];
-	int		*num_args;
 	char	**cmd;
 	char	***args;
 	char	**paths;
@@ -65,11 +64,14 @@ int		measure_array(char **arr);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 int		except_clean(char *name, t_pipe_d *pipex, int err_code);
 int		parse_all_commands(t_pipe_d *pipex);
-void	except_middle_command(int cmd_index, int access_status, t_pipe_d *pipex);
+void	except_mid_command(int cmd_index, int access_status, t_pipe_d *pipex);
 void	initialize_pipe(t_pipe_d *pipex, int argc, char **argv, char **envp);
 int		check_access(char *cmd, int mode);
+int		check_input(t_pipe_d *pipex);
+int		check_output(t_pipe_d *pipex);
 void	run_first_command(t_pipe_d *pipex);
 void	run_last_command(t_pipe_d *pipex);
 void	run_middle_command(int index_cmd, t_pipe_d *pipex);
+void	main_waiter(t_pipe_d *pipex);
 
 #endif

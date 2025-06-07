@@ -7,7 +7,7 @@ BLIBRARY = lib_pipex_bonus.a
 SRCS = pipex_main.c forker.c parse_cmd.c ft_split.c basic_utils.c \
 initializer.c error_handler.c parse_files.c
 BONUSSRCS = pipex_main_bonus.c initializer_bonus.c forker_bonus.c parse_cmd_bonus.c \
-ft_split.c basic_utils.c pipex_utils.c parse_files.c error_handler_bonus.c
+ft_split.c basic_utils.c pipex_utils.c parse_files_bonus.c error_handler_bonus.c
 #TSRCS = test1.c
 
 HEADER = pipex.h
